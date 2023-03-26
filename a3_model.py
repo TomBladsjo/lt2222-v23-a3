@@ -125,7 +125,7 @@ if __name__ == "__main__":
     outputdims = len(classes)
     model = Model(inputdims, outputdims) 
 
-    trainmodel(model, train_data)                            
+    train(model, train_data)                            
     conf_matrix = test(model, test_X_t, test_y_t)
 
 
