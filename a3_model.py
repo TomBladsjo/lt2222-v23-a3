@@ -102,18 +102,18 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    print("Reading {}...".format(args.featurefile))
+   print("Reading {}...".format(featurefile))
     # implement everything you need here
-    data = pd.read_csv(args.featurefile, index_col=['vectors'])
+    data = pd.read_csv(featurefile, index_col=['vectors'])
 
     classes = list(data['class'].unique())
-    train = data[data['split']=='train']
-    test = data.drop(train.index, axis=0)
+    trainset = data[data['split']=='train']
+    testset = data.drop(trainset.index, axis=0)
 
-    train_X = train.drop(['class','split', 'class_id'], axis=1)
-    train_y = train['class_id']
-    test_X = test.drop(['class','split', 'class_id'], axis=1)
-    test_y = test['class_id']
+    train_X = trainset.drop(['class','split', 'class_id'], axis=1)
+    train_y = trainset['class_id']
+    test_X = testset.drop(['class','split', 'class_id'], axis=1)
+    test_y = testset['class_id']
 
     train_X_t = torch.Tensor(train_X.to_numpy())
     train_y_t = torch.LongTensor(train_y.to_numpy())
@@ -125,11 +125,13 @@ if __name__ == "__main__":
     outputdims = len(classes)
     model = Model(inputdims, outputdims) 
 
-    train(model, train_data)
+    trainmodel(model, train_data)                            
     conf_matrix = test(model, test_X_t, test_y_t)
 
+
+    print('\nResult:\n')
     print(conf_matrix)
-    print('\nwhere\n')
+    print('\nwhere columns = true values and rows = model predictions\n')
     for i in range(len(classes)):
         print('{} = {}'.format(i, classes[i]))
 
