@@ -102,9 +102,9 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    print("Reading {}...".format(featurefile))
+    print("Reading {}...".format(args.featurefile))
     # implement everything you need here
-    data = pd.read_csv(featurefile, index_col=['vectors'])
+    data = pd.read_csv(args.featurefile, index_col=['vectors'])
 
     classes = list(data['class'].unique())
     trainset = data[data['split']=='train']
