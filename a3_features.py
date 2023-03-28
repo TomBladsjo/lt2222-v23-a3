@@ -4,23 +4,31 @@ import argparse
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
-# Whatever other imports you need
 
 def readfile(filename):
+    """Takes as input the name of a file and returns the content as a string,
+    cleaned from email headers, forwarded messages etc.
+    """
     document = ''
     main_body_start = False
     with open(filename) as f:
         for line in f:
             text = line.replace('\n', ' ') 
             if text.lstrip(' ')[:5] == '-----':
-                return document
+                # Removes last two words of email which are usually the sender's name.
+                return document.rstrip().rsplit(maxsplit=2)[0] if not document.isspace() else ''
             if main_body_start == True:
                 document += text
             elif text[:10] == 'X-FileName':
                 main_body_start = True
-    return document
+    # Again, removes what might be the sender's name. This is in no way a perfect solution.
+    return document.rstrip().rsplit(maxsplit=2)[0] if not document.isspace() else ''
 
 def read_data(rootdir):
+    """Takes as input the path to a directory containing multiple subdirectories,
+    and returns two lists of equal length: one of the (cleaned) files as strings, 
+    and one of the names of the subdirectories where each file was found.
+    """
     alldocs = []
     allauthors = []
     for author in os.listdir(path=rootdir):
@@ -30,7 +38,15 @@ def read_data(rootdir):
 
 
 def feature_table(documents, labels, dims, testsize):
-
+    """Turns a list of documents and a list of labels into a pandas DataFrame of
+    dimensionality-reduced vectorized representations.
+    
+    Args: 
+        documents: A list of documents as strings.
+        labels: A list of the corresponding labels as strings.
+        dims: The dimensions of the output representation.
+        testsize: The percentage of instances to be labelled as test.
+    """
     vectorizer = CountVectorizer(max_features=dims)
     X = vectorizer.fit_transform(documents).toarray()
 
@@ -78,6 +94,7 @@ if __name__ == "__main__":
 
     print("Done!")
     
+
 
 
 
